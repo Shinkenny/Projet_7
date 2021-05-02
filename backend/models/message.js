@@ -1,16 +1,18 @@
 const sql = require('../connexion');
 
 const Message = function (m) {
-    this.messageID = m.id,
-    this.user_ID = m.user_id,
+    this.message_id = m.id,
+    this.user_id = m.user_id,
+    this.prenom = m.prenom,
     this.title = m.title,
     this.message = m.message,
+    this.comments = m.comments ? m.comments : [],
     this.createdAt = m.createdAt
 };
 
 // Create a new message
 Message.create = (newMessage, result) => {
-    sql.query(`INSERT INTO message (id, user_id, title, message, createdAt) VALUES ("${newMessage.id}","${newMessage.user_id}","${newMessage.title}","${newMessage.message}", Now())`, (err, res) => {
+    sql.query(`INSERT INTO messages (user_id, title, message, createdAt) VALUES ("${newMessage.user_id}","${newMessage.title}","${newMessage.message}", Now())`, (err, res) => {
         if (err) {
             console.log("erreur: ", err);
             result(err, null);
@@ -23,7 +25,7 @@ Message.create = (newMessage, result) => {
 
 // Get a specific message
 Message.findById = (messageId, result) => {
-    sql.query(`SELECT * FROM messages WHERE id = ${messageId} ORDER BY date DESC`,
+    sql.query(`SELECT * FROM messages m inner join user u on u.id=m.user_id WHERE m.id = ${messageId}`,
         (err, res) => {
             if (err) {
                 console.log("erreur: ", err);
@@ -49,13 +51,12 @@ Message.findById = (messageId, result) => {
 
 // Get all messages
 Message.getAll = result => { 
-    sql.query("SELECT m.id, m.user_id, m.title, m.message, m.createdAt FROM messages m inner join user u on u.id=m.user_id", (err, res)=>{
+    sql.query("SELECT m.id, m.user_id, u.prenom, m.title, m.message, m.createdAt FROM messages m inner join user u on u.id=m.user_id ORDER BY createdAt DESC", (err, res)=>{
         if (err) {
             console.log("erreur: ", err);
             return;
         }
         let messages = [];
-        
         res.map(element => {
             let topic = new Message(element);
             messages.push(topic);
@@ -66,7 +67,7 @@ Message.getAll = result => {
 
 // Delete message by ID
 Message.remove = (id, result) => {
-    sql.query("DELETE FROM message WHERE id = ?", id, (err, res) => {
+    sql.query("DELETE FROM messages WHERE id = ?", id, (err, res) => {
         if (err) {
             console.log("erreur: ", err);
             result(null, err);

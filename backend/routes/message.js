@@ -3,9 +3,9 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const messageCtrl = require('../controllers/message');
 
-router.post('/create', messageCtrl.createMessage);
-router.get('/getAll', messageCtrl.getAllMessages);
-router.get('/:id', messageCtrl.findOneMessage);
-router.delete('/:id', messageCtrl.deleteMessage);
+router.post('/create', auth, messageCtrl.createMessage);
+router.get('/getAll', auth, messageCtrl.getAllMessages);
+router.get('/:id', auth, messageCtrl.findOneMessage);
+router.delete('/:id', auth, messageCtrl.deleteMessage);
 
 module.exports = router;

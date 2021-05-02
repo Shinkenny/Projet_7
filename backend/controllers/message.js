@@ -1,9 +1,10 @@
 const Message = require('../models/message');
+const Comment = require('../models/comment');
 
 /* Create a message */
-exports.createMessage = (req, res, next) => {
+exports.createMessage = (req, res) => {
   const message = new Message({
-        user_ID: req.body.user_ID,
+        user_id: req.body.user_id,
         title: req.body.title,
         message: req.body.message,
       })
@@ -15,7 +16,7 @@ exports.createMessage = (req, res, next) => {
 };
 
 /* Remove a message */
-exports.deleteMessage = (req, res, next) => {
+exports.deleteMessage = (req, res) => {
   Message.remove(req.params.id, (err, data) => {
         if (err) {
             if (err.kind === "Non trouvé !") {
@@ -27,24 +28,47 @@ exports.deleteMessage = (req, res, next) => {
     })
 }
 
-/* Get one particular message */
-exports.findOneMessage = (req, res, next) => {
-  Message.findById(req.params.id, (err, message) => {
-        if (err)
-            res.status(500).send({ message: "Message non trouvé !" + err });
+/* Get one particular message and its comment(s) */
+exports.findOneMessage = (req, res) => {
+  Message.findById(req.params.id, (err, messages) => {
+        if (err) {
+            res.status(500).send({ message: "Aucun message trouvé !" + err });
+        }
         else {
-            res.send(message);
+            Comment.getAll((err, comments) => {
+                if (err) {
+                    res.status(500).send({ message: "Aucun commentaires trouvés !" + err });
+                } else {
+                    comments.forEach(comment => {
+                        if (messages[0].message_id === comment.message_id) {
+                            messages[0].comments.push(comment)
+                        }
+                    })
+                }
+                res.send(messages)
+            })
         }
     })
 }
 
-/* Get all messages */
-exports.getAllMessages = (req, res, next) => {
+/* Get all messages and comments */
+exports.getAllMessages = (req, res) => {
     Message.getAll((err, messages) => {
         if (err)
             res.status(500).send({ message: "Aucun messages trouvés !" + err });
         else {
-            res.send(messages);
+            Comment.getAll((err, comments) => {
+                if (err) {
+                    res.status(500).send({ message: "Aucun commentaires trouvés !" + err });
+                } else {
+                    comments.forEach(comment => {
+                        let message = messages.find(elt => elt.message_id === comment.message_id)
+                        message.comments.push(comment)
+                    })
+                    res.send(messages)
+                }
+            }
+            )
         }
     })
 }

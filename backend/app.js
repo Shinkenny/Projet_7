@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const userRoutes = require('./routes/user');
 const messageRoutes = require('./routes/message');
+const commentRoutes = require('./routes/comment');
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -13,7 +14,8 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 
-app.use('/api', userRoutes);
+app.use('/api/auth', userRoutes);
 app.use('/api/message', messageRoutes);
+app.use('/api/comment', commentRoutes);
 
 module.exports = app;

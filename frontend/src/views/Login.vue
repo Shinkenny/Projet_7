@@ -1,5 +1,21 @@
 <template>
 	<div class="login">
-		<h1>Voici la page login</h1>
+		<Login>
+
+		</Login>
 	</div>
 </template>
+
+<script>
+import Login from '../components/Login'
+export default {
+	name: 'login',
+	components: {
+		'Login' : Login,
+	}
+}
+</script>
+
+<style>
+	
+</style>

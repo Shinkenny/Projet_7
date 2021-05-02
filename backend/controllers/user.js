@@ -4,19 +4,26 @@ const jwt = require('jsonwebtoken');
 
 /* User creation */
 exports.signup = (req, res, next) => {
-  bcrypt.hash(req.body.password, 10)
+    if (!req.body) {
+        res.status(400).json({ message: "Erreur !" })
+    }
+    bcrypt.hash(req.body.password, 10)
     .then(hash => {
-      const user = {
-        email: req.body.email,
-        password: hash,
-        nom: req.body.nom,
-        prenom: req.body.prenom,
-        isAdmin: req.body.isAdmin,
-        createdAt: new Date()
-      };
-      User.create(user, (err, data) => {
+        let role = "0"
+            if (req.body.isAdmin) {
+                role = req.body.isAdmin;
+            }
+        const user = {
+            email: req.body.email,
+            password: hash,
+            nom: req.body.nom,
+            prenom: req.body.prenom,
+            isAdmin: role,
+            createdAt: new Date()
+        };
+        User.create(user, (err, data) => {
                 if (err)
-                    res.status(500).json({ message: "Utilisateur non crée !" + err })
+                    res.status(500).json({ message: "Utilisateur non créé !" + err })
                 else res.send(data);
             })
     })
@@ -37,8 +44,8 @@ exports.login = (req, res, next) => {
                     }
                     res.status(200).json({
                         userId: user.id,
-                        token: jwt.sign({ userId: user.id }, 'SECRET_TOKEN', {
-                            expiresIn: '24h'
+                        token: jwt.sign({ userId: user.id }, 'RANDOM_TOKEN_SECRET', {
+                            expiresIn: '12h'
                         })
                     })
                 })
