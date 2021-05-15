@@ -7,12 +7,13 @@ const Message = function (m) {
     this.title = m.title,
     this.message = m.message,
     this.comments = m.comments ? m.comments : [],
-    this.createdAt = m.createdAt
+    this.createdAt = m.createdAt,
+    this.image = m.image
 };
 
 // Create a new message
 Message.create = (newMessage, result) => {
-    sql.query(`INSERT INTO messages (user_id, title, message, createdAt) VALUES ("${newMessage.user_id}","${newMessage.title}","${newMessage.message}", Now())`, (err, res) => {
+    sql.query(`INSERT INTO messages (user_id, title, message, createdAt, image) VALUES ("${newMessage.user_id}","${newMessage.title}","${newMessage.message}", Now(), "${newMessage.image}")`, (err, res) => {
         if (err) {
             console.log("erreur: ", err);
             result(err, null);
@@ -51,7 +52,7 @@ Message.findById = (messageId, result) => {
 
 // Get all messages
 Message.getAll = result => { 
-    sql.query("SELECT m.id, m.user_id, u.prenom, m.title, m.message, m.createdAt FROM messages m inner join user u on u.id=m.user_id ORDER BY createdAt DESC", (err, res)=>{
+    sql.query("SELECT m.id, m.user_id, u.prenom, m.title, m.message, m.createdAt, m.image FROM messages m inner join user u on u.id=m.user_id ORDER BY createdAt DESC", (err, res)=>{
         if (err) {
             console.log("erreur: ", err);
             return;

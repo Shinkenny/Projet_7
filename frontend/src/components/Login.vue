@@ -40,6 +40,7 @@
 
 <script>
 	import ApiConfig from '../api/api-config';
+  import Vue from 'vue';
 	export default {
     name: "login",
     data() {
@@ -66,7 +67,12 @@
         .then((result) => {
             localStorage.setItem("userId", result.data.userId)
             localStorage.setItem("token", result.data.token)
-        alert("Vous êtes à présent connecté !")
+        Vue.notify({
+            group: 'foo',
+            title: 'Connexion réussie !',
+            text: 'Vous êtes à présent connecté !',
+            type: 'success'
+          })
         let userId = localStorage.getItem("userId");
         ApiConfig.getOneUser(userId)
         .then(response => {

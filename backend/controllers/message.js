@@ -1,23 +1,40 @@
 const Message = require('../models/message');
 const Comment = require('../models/comment');
+const fs = require('fs');
 
 /* Create a message */
 exports.createMessage = (req, res) => {
-  const message = new Message({
+    if (!req.file) {
+    const message = new Message({
         user_id: req.body.user_id,
         title: req.body.title,
         message: req.body.message,
-      })
-  Message.create(message, (err, data) => {
+        image: "",
+    })
+    Message.create(message, (err, data) => {
         if (err)
             res.status(500).json({ message: "Message non créé !" })
         else res.send(data)
     })
+    } else {
+        const message = new Message({
+        user_id: req.body.user_id,
+        title: req.body.title,
+        message: req.body.message,
+        image: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+        })
+        Message.create(message, (err, data) => {
+            if (err)
+                res.status(500).json({ message: "Message non créé !" })
+            else res.send(data)
+        })
+    }
 };
 
 /* Remove a message */
 exports.deleteMessage = (req, res) => {
-  Message.remove(req.params.id, (err, data) => {
+    console.log(Message.image);
+    Message.remove(req.params.id, (err, data) => {
         if (err) {
             if (err.kind === "Non trouvé !") {
                 res.status(404).json({ message: "Message introuvable avec l'id : " + req.params.id })
@@ -30,7 +47,7 @@ exports.deleteMessage = (req, res) => {
 
 /* Get one particular message and its comment(s) */
 exports.findOneMessage = (req, res) => {
-  Message.findById(req.params.id, (err, messages) => {
+    Message.findById(req.params.id, (err, messages) => {
         if (err) {
             res.status(500).send({ message: "Aucun message trouvé !" + err });
         }

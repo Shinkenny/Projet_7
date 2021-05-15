@@ -74,16 +74,12 @@ const ApiConfig = {
       })
   },
 
-  createMessage(title, message) {
+  createMessage(formData) {
     return axios 
-      .post(URL + "message/create", {
-        user_id: localStorage.getItem('userId'),
-        title: title,
-        message: message,
-      },
-    {
+      .post(URL + "message/create", formData,{
             headers: {
               Authorization: "Bearer " + localStorage.getItem("token"),
+              'Content-Type': 'multipart/form-data'
                 }
     })
   },

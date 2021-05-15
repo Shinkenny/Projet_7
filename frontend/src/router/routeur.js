@@ -27,7 +27,7 @@ const routes = [
   {
     path: '/wall',
     name: 'Wall',
-    component: () => import('../views/Wall.vue'),
+    component: () => import('../views/Wall.vue')
   },
 ]
 

@@ -21,6 +21,7 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ message.title }}</h5>
                     <p class="card-text">{{ message.message }}</p>
+                    <img v-if="message.image != ''" class="center" :src="message.image" :alt="message.title"/>
                 </div>
                 <div class="card-footer">
                     <button class="btn btn-dark btn-responsive" v-if="message.comments.length >= 0" @click="showCommentsAction(message)">{{ message.comments.length }} Commentaire<span v-if="message.comments.length > 1">s</span>
@@ -74,7 +75,7 @@ export default {
     },
     methods: {
         // Delete a message
-          removeMessage(message) {
+        removeMessage(message) {
             if ( confirm("Êtes vous sûr de vouloir supprimer le message ?") ) {
                 ApiConfig.removeMessage(message)
                 location.reload()
@@ -105,7 +106,6 @@ export default {
         },
     },
     mounted() {
-
       ApiConfig.getAllMessage() 
       .then(response => {
         this.messages = response.data;

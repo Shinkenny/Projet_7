@@ -57,6 +57,7 @@
 
 <script>
 	import ApiConfig from '../api/api-config';
+  import Vue from 'vue';
 	export default {
 	name: "signUp",
 	data() {
@@ -86,7 +87,12 @@
 	if (!this.errors.length) {
 			ApiConfig.signup(this.nom, this.prenom, this.email, this.password)
 			.then(() => {
-			alert("Bienvenue sur Groupomania! Vous pouvez vous connecter dès maintenant.")
+        Vue.notify({
+            group: 'foo',
+            title: 'Inscription réussie !',
+            text: 'Bienvenue sur Groupomania! Vous pouvez vous connecter dès maintenant.',
+            type: 'success'
+          })
 					this.$router.push('/login');
 					})
 				}
